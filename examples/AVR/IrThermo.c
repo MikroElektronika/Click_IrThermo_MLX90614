@@ -46,11 +46,11 @@ sbit LCD_D7_Direction at DDC7_bit;
 // End LCD module connections
 
 // Ir Termo click constants
-const _IR_THERMO_ADDR = 0x00;
-const _AMB_TEMP      = 0x06;
-const _OBJ_TEMP      = 0x07;
+const int _IR_THERMO_ADDR       = 0x00;
+const int _AMB_TEMP             = 0x06;
+const int _OBJ_TEMP             = 0x07;
 
-float Temp;
+float temp;
 
 /**************************************************************************************************
 * Function ReadSensor(char Temp_Source)
@@ -60,20 +60,38 @@ float Temp;
 *                     0x07 for Target temperature
 * Output: Value that's proportional to Temperature in Kelvin degrees
 **************************************************************************************************/
-float ReadSensor(char Temp_Source){
-  unsigned int Temp_var, Temp_var1, Temp_var2;
+float read_sensor( char temp_source )
+{
+    unsigned int temp_var, temp_var1, temp_var2;
   
-  TWI_Start();                  // issue TWI start signal
-  TWI_Write(_IR_THERMO_ADDR | 0x00);   // send byte via TWI  (device address << 1)
-  TWI_Write(Temp_Source);       // send byte (data address)
-  TWI_Start();                  // issue TWI signal repeated start
-  TWI_Write(_IR_THERMO_ADDR | 0x01);   // send byte (device address << 1)
-  Temp_var = TWI_Read(0);       // Read the LSB first
-  Temp_var1 = TWI_Read(0);      // Read the MSB next
-  Temp_var2 = TWI_Read(1);      // Read the PEC (CRC sum for string confirmation calc'ing)
-  TWI_Stop();                   // issue TWI stop signal
+    // Issue TWI start signal
+    TWI_Start();
+
+    // Send byte via TWI  (device address << 1)
+    TWI_Write( _IR_THERMO_ADDR | 0x00 );
+
+    // Send byte (data address)
+    TWI_Write( temp_source );
+
+    // Issue TWI signal repeated start
+    TWI_Start();
+
+    // Send byte (device address << 1)
+    TWI_Write( _IR_THERMO_ADDR | 0x01 );
+
+    // Read the LSB first
+    temp_var = TWI_Read( 0 );
+
+    // Read the MSB next
+    temp_var1 = TWI_Read( 0 );
+
+    // Read the PEC (CRC sum for string confirmation calculating)
+    temp_var2 = TWI_Read( 1 );
+
+    // Issue TWI stop signal
+    TWI_Stop();
   
-  return ((Temp_var1 << 8) + Temp_var);
+    return ( ( temp_var1 << 8 ) + temp_var );
 }
 
 /**************************************************************************************************
@@ -85,53 +103,67 @@ float ReadSensor(char Temp_Source){
 *        temperature  value of temperature that will be written on LCD
 * Output: Nothing
 **************************************************************************************************/
-void Display_Temperature(char Temp_Source, float temperature){
-  char text[15];
+void display_temperature( char temp_source,
+                          float temperature )
+{
+    char text[ 15 ];
   
-  FloatToStr(temperature, text); // Convert temperature into string
-  if (text[1] == '.')            // display it with only two decimals
-    text[4] = 0;
-  if (text[2] == '.')
-    text[5] = 0;
-  if (text[3] == '.')
-    text[6] = 0;
+    FloatToStr( temperature, text );
 
-  strcat(text, "°C");            // add Celsius degree mark
+    // Display it with only two decimals
+    if( text[ 1 ] == '.' )
+        text[4] = 0;
+
+    if( text[ 2 ] == '.' )
+        text[ 5 ] = 0;
+
+    if( text[ 3 ] == '.' )
+        text[ 6 ] = 0;
+
+    strcat( text, "°C" );
   
-  if (Temp_Source == _AMB_TEMP)  // Display result
-    Lcd_Out(2, 1, text);
-  if (Temp_Source == _OBJ_TEMP)
-    Lcd_Out(2, 10, text);
+    // Display result
+    if( temp_source == _AMB_TEMP )
+        Lcd_Out( 2, 1, text );
+
+    if( temp_source == _OBJ_TEMP )
+        Lcd_Out( 2, 10, text );
 }
 
 //  Main
-void main() {
-  Lcd_Init();                           // performs Lcd initialization
-  Lcd_Cmd(_LCD_CLEAR);                  // clear Lcd
-  Lcd_Cmd(_LCD_CURSOR_OFF);             // set cursor off
-  Lcd_Out(1, 2, "IrThermo click");
-  Lcd_Out(2, 2, "Demonstration");
-  Delay_ms(2000);
-
-  TWI_Init(100000);                     // performs TWI initialization
-  Delay_ms(100);
-
-  Lcd_Cmd(_LCD_CLEAR);
-  Lcd_Out(1, 1, "Amb. t: ");
-  Lcd_Out(1, 9, " Obj. t:");
+void main()
+{
+    Lcd_Init();
+    Lcd_Cmd( _LCD_CLEAR );
+    Lcd_Cmd( _LCD_CURSOR_OFF );
+    Lcd_Out( 1, 2, "IrThermo click" );
+    Lcd_Out( 2, 2, "Demonstration" );
+    Delay_ms( 2000 );
+    TWI_Init( 100000 );
+    Delay_ms( 100 );
+    Lcd_Cmd( _LCD_CLEAR );
+    Lcd_Out( 1, 1, "Amb. t: " );
+    Lcd_Out( 1, 9, " Obj. t:" );
   
-  // infinite loop
-  while (1){
-    Temp = ReadSensor(_AMB_TEMP);          // Read Ambient temperature
-    Temp = (Temp * 0.02) - 273.15;         // Convert result in Celsius degrees
+    while ( 1 )
+    {
+        // Read Ambient temperature
+        temp = read_sensor( _AMB_TEMP );
 
-    Display_Temperature(_AMB_TEMP, Temp);  // Display result
+        // Convert result in Celsius degrees
+        temp = ( temp * 0.02 ) - 273.15;
 
-    Temp = ReadSensor(_OBJ_TEMP);          // Read Ambient temperature
-    Temp = (Temp * 0.02) - 273.15;         // Convert result in Celsius degrees
+        // Display result
+        display_temperature( _AMB_TEMP, temp );
 
-    Display_Temperature(_OBJ_TEMP, Temp);  // Display result
+        // Read Ambient temperature
+        temp = read_sensor( _OBJ_TEMP );
 
-    Delay_ms(500);                         // wait
-  }
+        // Convert result in Celsius degrees
+        temp = ( temp * 0.02 ) - 273.15;
+
+        // Display result
+        display_temperature( _OBJ_TEMP, temp );
+        Delay_ms( 500 );
+    }
 }
