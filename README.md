@@ -1,5 +1,5 @@
 > ![MikroE](http://www.mikroe.com/img/designs/beta/logo_small.png)
-> #Click_IrThermo_MLX90614#
+> #IrThermo click#
 > ##By [MikroElektronika](http://www.mikroe.com)
 
 IrThermo Click features MLX90614ESF-AAA single zone Infrared Thermometer module capable 
