@@ -94,9 +94,11 @@ void draw_screen()
     TFT_Write_Text( "Target", 70, 100 );
     TFT_Set_Font( &TFT_FontR, CL_BLACK, FO_HORIZONTAL );
     TFT_Set_Pen( CL_BLACK, 1 );
-    TFT_Rectangle_Round_Edges( button1.x1, button1.y1, button1.x2, button1.y2, 5 );
+    TFT_Rectangle_Round_Edges( button1.x1, button1.y1,
+                               button1.x2, button1.y2, 5 );
     TFT_Set_Brush( 1, pressed_color, 0, 0, 0, 0 );
-    TFT_Rectangle_Round_Edges( button2.x1, button2.y1, button2.x2, button2.y2, 5 );
+    TFT_Rectangle_Round_Edges( button2.x1, button2.y1,
+                               button2.x2, button2.y2, 5 );
     TFT_Set_Font( &Tahoma30x34, CL_BLACK, FO_HORIZONTAL );
     TFT_Write_Text( " °F", button1.x1 + 5, button1.y1 );
     TFT_Write_Text( " °C", button2.x1 + 5, button2.y1 );
@@ -129,15 +131,15 @@ void init_mcu()
     I2C0_Init_Advanced( 100000, &_GPIO_MODULE_I2C0_B23 );
 }
 
-/**************************************************************************************************
-* Function ReadSensor(char Temp_Source)
-* -------------------------------------------------------------------------------------------------
+/*****************************************************************************
+* Function : read_sensor( char temp_source )
+* ----------------------------------------------------------------------------
 * Overview: Function Reads Ir Termo sensor via I2C interface
 * Input: Temp_Source  0x06 for Ambient temperature
 *                     0x07 for Target temperature
 * Output: Value that's proportional to Temperature in Kelvin degrees
-**************************************************************************************************/
-float read_sensor(char temp_source)
+*****************************************************************************/
+float read_sensor( char temp_source )
 {
     unsigned char temp_var[ 2 ];
 
@@ -165,15 +167,15 @@ float read_sensor(char temp_source)
     return ( ( temp_var[ 1 ] << 8 ) + temp_var[ 0 ] );
 }
 
-/**************************************************************************************************
-* Function Display_Temperature(char Temp_Source, float temperature)
-* -------------------------------------------------------------------------------------------------
+/*****************************************************************************
+* Function : display_temperature( char temp_source, float temperature )
+* ----------------------------------------------------------------------------
 * Overview: Function Displays temperature on LCD
 * Input: Temp_Source  0x06 for Ambient temperature
 *                     0x07 for Target temperature
 *        temperature  value of temperature that will be written on LCD
 * Output: Nothing
-**************************************************************************************************/
+*****************************************************************************/
 void display_temperature( char temp_source,
                           float temperature )
 {
@@ -213,14 +215,14 @@ void display_temperature( char temp_source,
     }
 }
 
-/**************************************************************************************************
-* Function Read_Temperature(char Source)
-* -------------------------------------------------------------------------------------------------
+/*****************************************************************************
+* Function : read_temperature( char source )
+* ----------------------------------------------------------------------------
 * Overview: Function Reads Ir Termo sensor and converts result into degrees
 * Input: Temp_Source  0x06 for Ambient temperature
 *                     0x07 for Target temperature
 * Output: Value in Celsius or fahrenheit degrees
-**************************************************************************************************/
+*****************************************************************************/
 float read_temperature( char source )
 {
     float temperatue;
@@ -246,9 +248,9 @@ float read_temperature( char source )
     return temperatue;
 }
 
-/**************************************************************************************************
+/*****************************************************************************
 * Main function
-**************************************************************************************************/
+*****************************************************************************/
 void main()
 {
     init_mcu();
@@ -263,30 +265,38 @@ void main()
             if ( TP_TFT_Get_Coordinates( &x_coord, &y_coord ) == 0 )
             {
                 // button1
-                if ( ( x_coord > button1.x1 ) && ( x_coord < button1.x2 ) && ( y_coord > button1.y1 ) && ( y_coord < button1.y2 ) )
+                if ( ( x_coord > button1.x1 ) && ( x_coord < button1.x2 ) &&
+                     ( y_coord > button1.y1 ) && ( y_coord < button1.y2 ) )
                 {
                     if ( temp_format == 2 )
                     {
                         temp_format = 1;
                         TFT_Set_Pen( CL_BLACK, 1 );
                         TFT_Set_Brush( 1, CL_WHITE, 0, 0, 0, 0 );
-                        TFT_Rectangle_Round_Edges( button2.x1, button2.y1, button2.x2, button2.y2, 5 );
+                        TFT_Rectangle_Round_Edges( button2.x1, button2.y1,
+                                                   button2.x2, button2.y2, 5 );
                         TFT_Set_Brush( 1, pressed_color, 0, 0, 0, 0 );
-                        TFT_Rectangle_Round_Edges( button1.x1, button1.y1, button1.x2, button1.y2, 5 );
+                        TFT_Rectangle_Round_Edges( button1.x1, button1.y1,
+                                                   button1.x2, button1.y2, 5 );
                         TFT_Set_Font( &Tahoma30x34, CL_BLACK, FO_HORIZONTAL );
                         TFT_Write_Text( " °F", button1.x1 + 5, button1.y1 );
                         TFT_Write_Text( " °C", button2.x1 + 5, button2.y1 );
                     }
-                } else if ( ( x_coord > button2.x1 ) && ( x_coord < button2.x2 ) && ( y_coord > button2.y1 ) && ( y_coord < button2.y2 ) ) {
+                } else if ( ( x_coord > button2.x1 ) &&
+                            ( x_coord < button2.x2 ) &&
+                            ( y_coord > button2.y1 ) &&
+                            ( y_coord < button2.y2 ) ) {
 
                     if ( temp_format == 1 )
                     {
                         temp_format = 2;
                         TFT_Set_Pen( CL_BLACK, 1 );
                         TFT_Set_Brush( 1, CL_WHITE, 0, 0, 0, 0 );
-                        TFT_Rectangle_Round_Edges( button1.x1, button1.y1, button1.x2, button1.y2, 5 );
+                        TFT_Rectangle_Round_Edges( button1.x1, button1.y1,
+                                                   button1.x2, button1.y2, 5 );
                         TFT_Set_Brush( 1, pressed_color, 0, 0, 0, 0 );
-                        TFT_Rectangle_Round_Edges( button2.x1, button2.y1, button2.x2, button2.y2, 5 );
+                        TFT_Rectangle_Round_Edges( button2.x1, button2.y1,
+                                                   button2.x2, button2.y2, 5 );
                         TFT_Set_Font( &Tahoma30x34, CL_BLACK, FO_HORIZONTAL );
                         TFT_Write_Text( " °F", button1.x1 + 5, button1.y1 );
                         TFT_Write_Text( " °C", button2.x1 + 5, button2.y1 );
@@ -298,10 +308,13 @@ void main()
         if ( counter > 150 )
         {
             temp = read_temperature( _amb_temp ;
+
             // Display result
             display_temperature( _amb_temp, temp );
+
             // Read Ambient temperature
             temp = read_temperature( _obj_temp );
+
             // Display result
             display_temperature( _obj_temp, temp );
     
