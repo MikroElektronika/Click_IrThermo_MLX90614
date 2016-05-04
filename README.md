@@ -1,6 +1,6 @@
 ![MikroE](http://www.mikroe.com/img/designs/beta/logo_small.png)
 
-![IrThermo_click](http://www.mikroe.com/img/development-tools/accessory-boards/click/irthermo5v/preview/irthermo_click_thumb\02.png}
+![IrThermo_click](http://www.mikroe.com/img/development-tools/accessory-boards/click/irthermo5v/preview/irthermo_click_thumb\02.png)
 
 ---
 
