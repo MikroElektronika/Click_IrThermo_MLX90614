@@ -1,0 +1,66 @@
+'
+'Example for IrThermo_3V3 Click
+'
+'    Date          : jan 2018.
+'    Author        : MikroE Team
+'
+'Test configuration PIC32 :
+'    
+'    MCU                : P32MX795F512L
+'    Dev. Board         : EasyPIC Fusion v7
+'    PIC32 Compiler ver : v4.0.0.0
+'
+'---
+'Description :
+'
+'The application is composed of three sections :
+'
+'- System Initialization -  Initialization I2C and UART modules
+'- Application Initialization - Initialization IrThermo 3V3 Driver
+'- Application Task - Reading Ambient Temperature and displaying the value periodically
+'
+'
+'
+'
+program Click_IrThermo_3V3_PIC32
+
+include Click_IrThermo_3V3_types
+include Click_IrThermo_3V3_config
+
+dim
+    text as char[10] 
+    measuredTemperature as float 
+    
+sub procedure systemInit() 
+
+    mikrobus_i2cInit(_MIKROBUS1, @_IRTHRM3V3_I2C_CFG[0]) 
+    mikrobus_logInit(_LOG_USBUART_A, 9600) 
+    Delay_ms(100) 
+
+end sub
+
+sub procedure applicationInit() 
+
+    irthrm3v3_i2cDriverInit(T_IRTHRM3V3_P(@_MIKROBUS1_GPIO), T_IRTHRM3V3_P(@_MIKROBUS1_I2C), 0x5A) 
+
+end sub
+
+sub procedure applicationTask() 
+
+    measuredTemperature = irthrm3v3_getTambient() 
+    FloatToStr(measuredTemperature, text) 
+    mikrobus_logWrite("Ambient Temperature: ", _LOG_TEXT) 
+    mikrobus_logWrite(text, _LOG_LINE) 
+    Delay_ms(1000) 
+
+end sub
+
+main :
+
+    systemInit() 
+    applicationInit() 
+    while (1) 
+        applicationTask() 
+    wend
+
+end.

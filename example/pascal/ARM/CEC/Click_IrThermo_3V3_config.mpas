@@ -1,0 +1,8 @@
+unit Click_IrThermo_3V3_config;
+
+uses Click_IrThermo_3V3_types;
+
+const
+    _IRTHRM3V3_I2C_CFG : array[1] of uint32_t = (_I2C_100KHZ); 
+    
+end.
