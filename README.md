@@ -6,8 +6,8 @@
 
 - **CIC Prefix**  : IRTHRM3V3
 - **Author**      : MikroE Team
-- **Verison**     : ${VER}
-- **Date**        : ${DATE}
+- **Verison**     : 1.0.0
+- **Date**        : Jan 2018.
 
 ---
 
